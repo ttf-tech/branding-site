@@ -4174,7 +4174,15 @@ html[data-theme="new"] .hero-slide {
 }
 
 html[data-theme="new"] .hero-slide.is-active {
+  z-index: 2;
   opacity: 1;
+}
+
+/* Outgoing photo stays solid underneath while the next one fades in (no double exposure). */
+html[data-theme="new"] .hero-slide.is-leaving {
+  z-index: 1;
+  opacity: 1;
+  transition: none;
 }
 
 html[data-theme="new"] .hero-slide::after {
@@ -4194,10 +4202,6 @@ html[data-theme="new"] .hero-slide img {
   object-position: center 40%;
   transform: scale(1.05);
   transition: transform 7s ease-out;
-}
-
-html[data-theme="new"] .hero-slide:nth-child(2) img {
-  object-position: center 60%;
 }
 
 html[data-theme="new"] .hero-slide.is-active img {

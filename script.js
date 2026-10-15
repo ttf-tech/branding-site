@@ -457,8 +457,16 @@ document.querySelectorAll("[data-hero-carousel]").forEach((root) => {
   let index = 0;
   let timer = null;
 
+  let leaveTimer = null;
   const show = (next) => {
+    const previous = slides[index];
     index = (next + slides.length) % slides.length;
+    if (previous !== slides[index]) {
+      slides.forEach((slide) => slide.classList.remove("is-leaving"));
+      previous.classList.add("is-leaving");
+      clearTimeout(leaveTimer);
+      leaveTimer = setTimeout(() => previous.classList.remove("is-leaving"), 1200);
+    }
     slides.forEach((slide, i) => {
       slide.classList.toggle("is-active", i === index);
       slide.setAttribute("aria-hidden", String(i !== index));
