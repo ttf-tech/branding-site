@@ -447,3 +447,48 @@ document.querySelectorAll("[data-partners-carousel]").forEach((carousel) => {
   refreshCycleWidth();
   window.requestAnimationFrame(autoScroll);
 });
+
+document.querySelectorAll("[data-hero-carousel]").forEach((root) => {
+  const slides = Array.from(root.querySelectorAll(".hero-slide"));
+  const dots = Array.from(root.querySelectorAll(".hero-dot"));
+  if (slides.length < 2) return;
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let index = 0;
+  let timer = null;
+
+  const show = (next) => {
+    index = (next + slides.length) % slides.length;
+    slides.forEach((slide, i) => {
+      slide.classList.toggle("is-active", i === index);
+      slide.setAttribute("aria-hidden", String(i !== index));
+    });
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("is-active", i === index);
+      dot.setAttribute("aria-current", String(i === index));
+    });
+  };
+  const stop = () => {
+    clearInterval(timer);
+    timer = null;
+  };
+  const start = () => {
+    if (timer || reducedMotion.matches || document.hidden) return;
+    timer = setInterval(() => show(index + 1), 5500);
+  };
+
+  dots.forEach((dot, i) => dot.addEventListener("click", () => {
+    show(i);
+    stop();
+    start();
+  }));
+  root.addEventListener("mouseenter", stop);
+  root.addEventListener("mouseleave", start);
+  root.addEventListener("focusin", stop);
+  root.addEventListener("focusout", start);
+  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+  reducedMotion.addEventListener("change", () => (reducedMotion.matches ? stop() : start()));
+
+  show(0);
+  start();
+});
